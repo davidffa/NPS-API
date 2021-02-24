@@ -26,6 +26,6 @@ export default class UserController {
 
     await usersRepository.save(user);
 
-    return res.send(user);
+    return res.status(201).send(user);
   }
 }
