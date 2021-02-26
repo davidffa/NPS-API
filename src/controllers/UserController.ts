@@ -3,6 +3,8 @@ import { getCustomRepository } from 'typeorm';
 
 import UsersRepository from '../repositories/UsersRepository';
 
+import AppError from '../errors/AppError';
+
 import * as yup from 'yup';
 
 export default class UserController {
@@ -17,7 +19,7 @@ export default class UserController {
     try {
       await schema.validate(req.body, { abortEarly: false });
     }catch (err) {
-      return res.status(400).json({ error: err });
+      throw new AppError(err);
     }
 
     const usersRepository = getCustomRepository(UsersRepository)
@@ -27,9 +29,7 @@ export default class UserController {
     });
 
     if (userAlreadyExists) {
-      return res.status(400).json({ 
-        error: 'User already exists.'
-      });
+      throw new AppError('User already exists.');
     }
 
     const user = usersRepository.create({
